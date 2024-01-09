@@ -44,7 +44,7 @@ int main()
     }
     
     // Получение результата от сервера
-    if (msgrcv(msqid, &msg, sizeof(msg.mtext), client_id + 1, 0) == -1) {
+    if (msgrcv(msqid, &msg, sizeof(msg.mtext), client_id + 1+30000, 0) == -1) {
         perror("Ошибка при получении сообщений");
         exit(1);
     }
