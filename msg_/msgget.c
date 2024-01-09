@@ -51,17 +51,12 @@ int main()
     
     while (1) {
         // Получение сообщений от клиента
-        int result_m = msgrcv(msqid, &msg, sizeof(msg.mtext), 0, 0);
+        int result_m = msgrcv(msqid, &msg, sizeof(msg.mtext), -30000, 0);
         if (result_m == -1) {
             perror("Ошибка при чтении сообщений");
             exit(1);
         }
-        else{
-            if (msg.mtype == server_pid){
-                continue;
-            }
-        }
-        
+      
         printf("Получено сообщение от клиента с ID %ld: %s\n", msg.mtype, msg.mtext);
         
         int num = atoi(msg.mtext);
@@ -69,7 +64,7 @@ int main()
         
         // Отправка результата клиенту
         sprintf(msg.mtext, "%d", result);
-        msg.mtype = msg.mtype + 1;
+        msg.mtype = msg.mtype + 1+30000;
         if (msgsnd(msqid, &msg, sizeof(msg.mtext), 0) == -1) {
             perror("Ошибка при отправке сообщений");
             exit(1);
