@@ -1,35 +1,18 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
 
-#define FIFO_NAME "myfifo"
-
-int main()
-{
-    int fd;
-    char buf[100];
-
-    // проверяем права доступа к текущей директории
-    if(access(".", R_OK) == -1) {
-        perror("access");
-        exit(EXIT_FAILURE);
+int main() {
+    FILE *fp;
+    char buffer[1024];
+    fp = popen("ls -l", "r"); // открыть процесс для чтения вывода команды ls -l
+    if (fp == NULL) {
+        printf("Ошибка при выполнении команды\n");
+        exit(1);
     }
-
-    // открываем FIFO для чтения
-    fd = open(FIFO_NAME, O_RDONLY);
-
-    printf("Waiting for data...\n");
-
-    while(read(fd, buf, sizeof(buf)) > 0) {
-        // выводим данные на экран
-        printf("%s", buf);
+    while (fgets(buffer, sizeof(buffer), fp) != NULL) { // читать вывод команды>
+        printf("%s", buffer); // вывести на экран
     }
-
-    // закрываем дескриптор FIFO
-    close(fd);
-
-    exit(EXIT_SUCCESS);
+    pclose(fp); // закрыть процесс
+    return 0;
 }
